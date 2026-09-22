@@ -1,0 +1,40 @@
+name: Mirror Upstream
+
+# 把上游 shy3130/tick-stock-panel 的 main 镜像到本 fork 的 upstream 分支。
+#
+# 分支约定:
+#   main     = 你自己的代码(部署源), 本 workflow 绝不触碰
+#   upstream = 上游代码的只读镜像, 每 6h 自动刷新, 可被强推覆盖, 不要往这里提交
+#   dev      = 日常开发分支
+#
+# 合上游更新: git checkout main && git merge fork/upstream && git push fork main
+#
+# 为什么镜像到独立分支而不是 main: schedule 只认默认分支上的 workflow 文件,
+# 文件本身就会让 main 与上游永久差 1 个文件; 若把上游强推回 main, 又会抹掉
+# 您自己的提交。分开放之后 main 与 upstream 互不干扰。
+on:
+  schedule:
+    - cron: '17 */6 * * *'   # 每 6 小时; 避开整点(整点高负载时排队任务可能被丢弃)
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Mirror upstream/main -> upstream
+        env:
+          UPSTREAM_URL: https://github.com/shy3130/tick-stock-panel.git
+        run: |
+          git remote add upstream "$UPSTREAM_URL"
+          git fetch upstream main
+          # upstream 分支是纯镜像(无自有提交), 因此允许强推:
+          # 上游重写历史时普通 push 会 not fast-forward 失败。
+          git push --force origin \
+            refs/remotes/upstream/main:refs/heads/upstream
+          echo "mirrored upstream/main = $(git rev-parse --short upstream/main)"
