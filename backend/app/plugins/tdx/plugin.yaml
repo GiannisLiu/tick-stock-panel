@@ -1,0 +1,15 @@
+# 通达信(本机客户端) — 五档盘口数据源插件
+# 数据来自通达信客户端(TdxW.exe)启动登录后的 JSON-RPC 服务 http://127.0.0.1:17709/
+# 纯 HTTP, 无额外依赖 (runtime: none); 客户端未运行/未登录时插件灰显不可切换。
+# Docker 部署: 容器的 loopback 不是宿主机, 需把插件目录挂进容器并设环境变量
+#   TDX_BASE_URL=http://host.docker.internal:17709/
+
+name: tdx
+display_name: "通达信"
+runtime: none
+entry: app.plugins.tdx.provider:TdxProvider
+check: app.plugins.tdx.provider:availability
+datasets: [depth5, full_minute]
+description: "本机通达信客户端的五档盘口(连板梯队封单、真假涨停/跌停判定, 逐标的快照约 13ms)与盘中全市场当日 1 分钟K(全量分钟, 全市场一轮约 2.9s)。需保持通达信客户端开启并登录。未接入实时行情(单标的快照取全市场约 72s/轮, 不可行)与分钟数据集(分时图/分钟回测仍走原数据源), 这些自动回退 TickFlow。"
+install_hint: "1) 启动通达信客户端(TdxW.exe)并登录进入主界面(宿主机可用 scripts/start_tdx.ps1 幂等拉起, 也可配任务计划随登录自启); 2) Docker 部署需把插件目录挂进容器并设 TDX_BASE_URL=http://host.docker.internal:17709/; 3) 在「设置 -> 数据源」重新加载; 4) 体检用 backend/scripts/tdx_probe.py --live"
+homepage: "https://help.tdx.com.cn/quant/"

@@ -8,6 +8,7 @@ services:
       args:
         BACKEND_EXTRAS: ${BACKEND_EXTRAS:-}
         CODEX_CLI_VERSION: ${CODEX_CLI_VERSION:-0.144.3}
+        INCLUDE_STOCKSDK: ${INCLUDE_STOCKSDK:-0}
     container_name: TickFlow_Stock_Panel
     ports:
       - "${HOST:-0.0.0.0}:${PORT:-3018}:3018"
@@ -23,9 +24,20 @@ services:
       - DATA_DIR=/app/data
       # 将主机 Codex Desktop 的 loopback local-access 端点映射到 Docker host gateway。
       - CODEX_DOCKER_HOST=host.docker.internal
+      # 通达信五档插件 (app/plugins/tdx): 行情服务在宿主机 17709, 容器内的 127.0.0.1
+      # 是容器自己, 所以走 host gateway。没开通达信客户端时该插件自检失败自动灰显,
+      # 不影响其它数据源。
+      - TDX_BASE_URL=${TDX_BASE_URL:-http://host.docker.internal:17709/}
     volumes:
       - ./data:/app/data
       - ./tiers.yaml:/app/tiers.yaml:ro
+      # 通达信插件源码挂进镜像(含 plugin.yaml 清单)。重建容器后后端会重新扫描
+      # plugins/ 目录; 但重新加载只重扫目录与清单, Python 已 import 的模块不会重读,
+      # 所以改插件 .py 代码后要 docker restart(不必重建镜像)。
+      - ./backend/app/plugins/tdx:/app/app/plugins/tdx:ro
+      # 探针等运维脚本(镜像不含 scripts/): 让 `docker exec <容器> /app/.venv/bin/python
+      # /app/scripts/tdx_probe.py --live` 能直接跑, 改脚本无需重建镜像。
+      - ./backend/scripts:/app/scripts:ro
       # 保留原始 dotenv 值供首次密码初始化读取，避免 Compose 展开密码中的 $VAR。
       - ./.env:/app/.env:ro
       # 复用主机 Codex 登录态；后端只读后复制到单次请求的临时 CODEX_HOME。
