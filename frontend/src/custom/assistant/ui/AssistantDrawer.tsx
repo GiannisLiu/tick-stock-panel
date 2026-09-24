@@ -206,12 +206,16 @@ function RhPromoBanner() {
       <span>🎁</span>
     </a>
   )
+  // 窗口(overflow-hidden)裁剪滚动内容, 礼包图标与 X 按钮在窗口外, 永不被文字盖住;
+  // 轨道 w-max 按内容撑宽, 份数为偶数时 translateX(-50%) 恰好位移整份文案宽度,
+  // 循环回跳视觉无缝。4 份保证极宽抽屉下窗口内也始终有内容。
   return (
-    <div className="group flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden rounded-btn border border-amber-400/30 bg-amber-400/15 py-1 pl-2 pr-1 dark:border-amber-400/25 dark:bg-amber-400/10">
+    <div className="group flex min-w-0 flex-1 items-center gap-1.5 rounded-btn border border-amber-400/30 bg-amber-400/15 py-1 pl-2 pr-1 dark:border-amber-400/25 dark:bg-amber-400/10">
       <Gift className="h-3 w-3 shrink-0 text-amber-600 dark:text-amber-400" />
-      <div className="flex min-w-0 flex-1 animate-[rh-marquee_26s_linear_infinite] whitespace-nowrap motion-reduce:animate-none group-hover:[animation-play-state:paused]">
-        {copy('a')}
-        {copy('b')}
+      <div className="min-w-0 flex-1 overflow-hidden">
+        <div className="flex w-max animate-[rh-marquee_26s_linear_infinite] whitespace-nowrap motion-reduce:animate-none group-hover:[animation-play-state:paused]">
+          {['a', 'b', 'c', 'd'].map(copy)}
+        </div>
       </div>
       <button
         onClick={snooze}
