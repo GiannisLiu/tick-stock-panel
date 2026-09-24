@@ -185,16 +185,16 @@ function DrawerHeader({
   return (
     <div className="relative flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
       <Sparkles className="h-4 w-4 shrink-0 text-accent" />
-      <span className="text-sm font-semibold text-foreground">AI 助手</span>
+      <span className="shrink-0 text-sm font-semibold text-foreground">AI 助手</span>
       {status?.model && (
         <span
-          className="max-w-36 truncate rounded-btn bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-muted"
-          title={`供应商: ${status.provider}`}
+          className="min-w-0 truncate rounded-btn bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-muted"
+          title={`模型: ${status.model}\n供应商: ${status.provider ?? '-'}`}
         >
           {status.model}
         </span>
       )}
-      <div className="ml-auto flex items-center gap-0.5">
+      <div className="ml-auto flex shrink-0 items-center gap-0.5">
         <div className="relative">
           <IconButton title="历史会话" onClick={() => setMenuOpen(v => !v)} disabled={sending}>
             <History className="h-4 w-4" />
