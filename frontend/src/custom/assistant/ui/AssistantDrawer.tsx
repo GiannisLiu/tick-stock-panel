@@ -152,8 +152,8 @@ function DrawerPanel({
       role="complementary"
       aria-label="AI 助手"
     >
-      <DrawerHeader status={status} sessions={sessions} activeId={activeId} sending={sending} />
       <RhPromoBanner />
+      <DrawerHeader status={status} sessions={sessions} activeId={activeId} sending={sending} />
       <MessageList messages={messages} sending={sending} status={status} suggests={suggests} />
       <InputArea sending={sending} blocked={status ? !status.supports_tools : false} />
 
@@ -175,7 +175,8 @@ function DrawerPanel({
   )
 }
 
-/** RunningHub 赞助推广横幅: 琥珀色高亮(深浅主题各取一档), 可点击跳转邀请链接。
+/** RunningHub 推广横幅: 置于抽屉最顶部, 单行跑马灯横向滚动(悬停暂停),
+ * 琥珀色高亮(深浅主题各取一档), 可点击跳转邀请链接。
  * 点 X 后一周(7 天)内不再显示 —— 时间戳持久化到 localStorage; DrawerPanel 随抽屉
  * 开合挂载/卸载, 每次点开对话框重新检查是否已到期, 到期后横幅自动恢复。 */
 function RhPromoBanner() {
@@ -190,24 +191,29 @@ function RhPromoBanner() {
     setDismissed(true)
     try { localStorage.setItem(RH_PROMO_DISMISS_KEY, String(Date.now())) } catch { /* 存储不可用时仅本次关闭 */ }
   }
+  const copy = (key: string) => (
+    <a
+      key={key}
+      href={RH_PROMO_URL}
+      target="_blank"
+      rel="noreferrer"
+      className="flex shrink-0 items-center gap-1 pr-10 text-[11px] leading-relaxed text-secondary transition-colors hover:text-foreground"
+    >
+      <span className="font-medium text-amber-600 dark:text-amber-400">Claude、ChatGPT、Gemini</span>
+      <span>等国际模型直连稳定不掉线，</span>
+      <span className="font-medium text-amber-600 dark:text-amber-400">最高优惠 80%</span>
+      <span>，</span>
+      <span className="font-medium text-amber-600 dark:text-amber-400">通过此链接注册赠送 1000 RH 积分</span>
+      <span>🎁</span>
+    </a>
+  )
   return (
-    <div className="flex shrink-0 items-start gap-2 border-b border-amber-400/30 bg-amber-400/15 px-4 py-2 dark:border-amber-400/25 dark:bg-amber-400/10">
-      <Gift className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-      <a
-        href={RH_PROMO_URL}
-        target="_blank"
-        rel="noreferrer"
-        className="min-w-0 flex-1 text-[11px] leading-relaxed text-secondary transition-colors hover:text-foreground"
-      >
-        <span className="font-semibold text-amber-700 dark:text-amber-300">RunningHub 赞助</span>
-        {' · '}
-        <span className="font-medium text-amber-600 dark:text-amber-400">Claude、ChatGPT、Gemini</span>
-        {' 等国际模型直连稳定不掉线，'}
-        <span className="font-medium text-amber-600 dark:text-amber-400">最高优惠 80%</span>
-        {'，'}
-        <span className="font-medium text-amber-600 dark:text-amber-400">通过此链接注册赠送 1000 RH 积分</span>
-        {'。'}
-      </a>
+    <div className="group flex shrink-0 items-center gap-2 overflow-hidden border-b border-amber-400/30 bg-amber-400/15 py-1.5 pl-3 pr-2 dark:border-amber-400/25 dark:bg-amber-400/10">
+      <Gift className="h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+      <div className="flex min-w-0 flex-1 animate-[rh-marquee_26s_linear_infinite] whitespace-nowrap motion-reduce:animate-none group-hover:[animation-play-state:paused]">
+        {copy('a')}
+        {copy('b')}
+      </div>
       <button
         onClick={snooze}
         title="关闭推广 (一周内不再显示)"
