@@ -48,6 +48,8 @@ const DEFAULT_WIDTH = 720
 const MIN_WIDTH = 480
 
 const RH_PROMO_URL = 'https://www.runninghub.ai/zh-cn/call-api/llm/models?source=github&inviteCode=edt5wh7c'
+const RH_PROMO_DISMISS_KEY = 'assistant.rh_promo.dismissed_at.v1'
+const RH_PROMO_SNOOZE_MS = 7 * 24 * 60 * 60 * 1000
 
 function loadWidth(): number {
   try {
@@ -174,10 +176,20 @@ function DrawerPanel({
 }
 
 /** RunningHub 赞助推广横幅: 琥珀色高亮(深浅主题各取一档), 可点击跳转邀请链接。
- * 关闭仅本次打开期间生效 —— DrawerPanel 随抽屉开合挂载/卸载, 每次点开对话框横幅都会重新出现。 */
+ * 点 X 后一周(7 天)内不再显示 —— 时间戳持久化到 localStorage; DrawerPanel 随抽屉
+ * 开合挂载/卸载, 每次点开对话框重新检查是否已到期, 到期后横幅自动恢复。 */
 function RhPromoBanner() {
-  const [dismissed, setDismissed] = useState(false)
+  const [dismissed, setDismissed] = useState(() => {
+    try {
+      const ts = Number(localStorage.getItem(RH_PROMO_DISMISS_KEY))
+      return Number.isFinite(ts) && Date.now() - ts < RH_PROMO_SNOOZE_MS
+    } catch { return false }
+  })
   if (dismissed) return null
+  const snooze = () => {
+    setDismissed(true)
+    try { localStorage.setItem(RH_PROMO_DISMISS_KEY, String(Date.now())) } catch { /* 存储不可用时仅本次关闭 */ }
+  }
   return (
     <div className="flex shrink-0 items-start gap-2 border-b border-amber-400/30 bg-amber-400/15 px-4 py-2 dark:border-amber-400/25 dark:bg-amber-400/10">
       <Gift className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
@@ -197,9 +209,9 @@ function RhPromoBanner() {
         {'。'}
       </a>
       <button
-        onClick={() => setDismissed(true)}
-        title="关闭推广"
-        aria-label="关闭推广"
+        onClick={snooze}
+        title="关闭推广 (一周内不再显示)"
+        aria-label="关闭推广 (一周内不再显示)"
         className="shrink-0 rounded-btn p-0.5 text-muted transition-colors hover:bg-elevated hover:text-foreground"
       >
         <X className="h-3.5 w-3.5" />
