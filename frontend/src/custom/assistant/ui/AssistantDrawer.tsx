@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowDown,
+  Gift,
   History,
   Plus,
   SendHorizontal,
@@ -45,6 +46,9 @@ const EASE_SMOOTH: [number, number, number, number] = [0.16, 1, 0.3, 1]
 const WIDTH_STORAGE_KEY = 'assistant.width.v1'
 const DEFAULT_WIDTH = 720
 const MIN_WIDTH = 480
+
+const RH_PROMO_URL = 'https://www.runninghub.ai/zh-cn/call-api/llm/models?source=github&inviteCode=edt5wh7c'
+const RH_PROMO_DISMISS_KEY = 'assistant.rh_promo.dismissed.v1'
 
 function loadWidth(): number {
   try {
@@ -148,6 +152,7 @@ function DrawerPanel({
       aria-label="AI 助手"
     >
       <DrawerHeader status={status} sessions={sessions} activeId={activeId} sending={sending} />
+      <RhPromoBanner />
       <MessageList messages={messages} sending={sending} status={status} suggests={suggests} />
       <InputArea sending={sending} blocked={status ? !status.supports_tools : false} />
 
@@ -166,6 +171,46 @@ function DrawerPanel({
         <span className="absolute left-1/2 top-1/2 h-10 w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/50 opacity-0 transition-opacity duration-150 ease-smooth group-hover/handle:opacity-100" />
       </div>
     </motion.aside>
+  )
+}
+
+/** RunningHub 赞助推广横幅: 琥珀色高亮(深浅主题各取一档), 可点击跳转邀请链接, 关闭后持久化不再出现。 */
+function RhPromoBanner() {
+  const [dismissed, setDismissed] = useState(() => {
+    try { return localStorage.getItem(RH_PROMO_DISMISS_KEY) === '1' } catch { return false }
+  })
+  if (dismissed) return null
+  const dismiss = () => {
+    setDismissed(true)
+    try { localStorage.setItem(RH_PROMO_DISMISS_KEY, '1') } catch { /* 存储不可用时仅本次关闭 */ }
+  }
+  return (
+    <div className="flex shrink-0 items-start gap-2 border-b border-amber-400/30 bg-amber-400/15 px-4 py-2 dark:border-amber-400/25 dark:bg-amber-400/10">
+      <Gift className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+      <a
+        href={RH_PROMO_URL}
+        target="_blank"
+        rel="noreferrer"
+        className="min-w-0 flex-1 text-[11px] leading-relaxed text-secondary transition-colors hover:text-foreground"
+      >
+        <span className="font-semibold text-amber-700 dark:text-amber-300">RunningHub 赞助</span>
+        {' · '}
+        <span className="font-medium text-amber-600 dark:text-amber-400">Claude、ChatGPT、Gemini</span>
+        {' 等国际模型直连稳定不掉线，'}
+        <span className="font-medium text-amber-600 dark:text-amber-400">最高优惠 80%</span>
+        {'，'}
+        <span className="font-medium text-amber-600 dark:text-amber-400">通过此链接注册赠送 1000 RH 积分</span>
+        {'。'}
+      </a>
+      <button
+        onClick={dismiss}
+        title="关闭推广"
+        aria-label="关闭推广"
+        className="shrink-0 rounded-btn p-0.5 text-muted transition-colors hover:bg-elevated hover:text-foreground"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
   )
 }
 
