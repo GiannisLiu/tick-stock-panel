@@ -34,6 +34,22 @@
 
 </div>
 
+<img src="docs/sponsors/sponsor-header.svg" width="240" alt="赞助支持 Sponsor">
+
+<div align="center">
+
+<a href="https://www.runninghub.ai/call-api?source=github&inviteCode=edt5wh7c" target="_blank" rel="noopener noreferrer">
+  <img src="docs/sponsors/runninghub-banner-v3.svg?v=3" alt="RunningHub API — 单一接口直连 400+ 主流大模型" width="100%">
+</a>
+
+<a href="https://www.runninghub.ai/call-api?source=github&inviteCode=edt5wh7c" target="_blank" rel="noopener noreferrer">
+  <img src="docs/sponsors/runninghub-intro-card.svg?v=4" alt="About RunningHub API — 产品介绍" width="100%">
+</a>
+
+**本项目由 [RunningHub](https://www.runninghub.ai/call-api?source=github&inviteCode=edt5wh7c) 提供支持** · 单一接口直连 400+ 主流大模型 · 免费测试
+
+</div>
+
 ---
 
 > [!IMPORTANT]
@@ -551,7 +567,6 @@ PORT=3018                      # 服务端口
 
 本开源项目已链接并认可 [LINUX DO 社区](https://linux.do)。
 
-本开源项目由 [智谱 GLM 大模型](https://open.bigmodel.cn/) 辅助构建,感谢 [智谱 AI 开放平台](https://open.bigmodel.cn/) 提供支持。
 
 ---
 
