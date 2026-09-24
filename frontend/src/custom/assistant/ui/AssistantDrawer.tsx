@@ -152,7 +152,6 @@ function DrawerPanel({
       role="complementary"
       aria-label="AI 助手"
     >
-      <RhPromoBanner />
       <DrawerHeader status={status} sessions={sessions} activeId={activeId} sending={sending} />
       <MessageList messages={messages} sending={sending} status={status} suggests={suggests} />
       <InputArea sending={sending} blocked={status ? !status.supports_tools : false} />
@@ -175,10 +174,10 @@ function DrawerPanel({
   )
 }
 
-/** RunningHub 推广横幅: 置于抽屉最顶部, 单行跑马灯横向滚动(悬停暂停),
+/** RunningHub 推广条: 嵌在抽屉标题行中间, 单行跑马灯横向滚动(悬停暂停),
  * 琥珀色高亮(深浅主题各取一档), 可点击跳转邀请链接。
  * 点 X 后一周(7 天)内不再显示 —— 时间戳持久化到 localStorage; DrawerPanel 随抽屉
- * 开合挂载/卸载, 每次点开对话框重新检查是否已到期, 到期后横幅自动恢复。 */
+ * 开合挂载/卸载, 每次点开对话框重新检查是否已到期, 到期后自动恢复。 */
 function RhPromoBanner() {
   const [dismissed, setDismissed] = useState(() => {
     try {
@@ -197,7 +196,7 @@ function RhPromoBanner() {
       href={RH_PROMO_URL}
       target="_blank"
       rel="noreferrer"
-      className="flex shrink-0 items-center gap-1 pr-10 text-[11px] leading-relaxed text-secondary transition-colors hover:text-foreground"
+      className="flex shrink-0 items-center gap-1 pr-8 text-[10px] leading-relaxed text-secondary transition-colors hover:text-foreground"
     >
       <span className="font-medium text-amber-600 dark:text-amber-400">Claude、ChatGPT、Gemini</span>
       <span>等国际模型直连稳定不掉线，</span>
@@ -208,8 +207,8 @@ function RhPromoBanner() {
     </a>
   )
   return (
-    <div className="group flex shrink-0 items-center gap-2 overflow-hidden border-b border-amber-400/30 bg-amber-400/15 py-1.5 pl-3 pr-2 dark:border-amber-400/25 dark:bg-amber-400/10">
-      <Gift className="h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+    <div className="group flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden rounded-btn border border-amber-400/30 bg-amber-400/15 py-1 pl-2 pr-1 dark:border-amber-400/25 dark:bg-amber-400/10">
+      <Gift className="h-3 w-3 shrink-0 text-amber-600 dark:text-amber-400" />
       <div className="flex min-w-0 flex-1 animate-[rh-marquee_26s_linear_infinite] whitespace-nowrap motion-reduce:animate-none group-hover:[animation-play-state:paused]">
         {copy('a')}
         {copy('b')}
@@ -220,7 +219,7 @@ function RhPromoBanner() {
         aria-label="关闭推广 (一周内不再显示)"
         className="shrink-0 rounded-btn p-0.5 text-muted transition-colors hover:bg-elevated hover:text-foreground"
       >
-        <X className="h-3.5 w-3.5" />
+        <X className="h-3 w-3" />
       </button>
     </div>
   )
@@ -251,6 +250,7 @@ function DrawerHeader({
           {status.model}
         </span>
       )}
+      <RhPromoBanner />
       <div className="ml-auto flex shrink-0 items-center gap-0.5">
         <div className="relative">
           <IconButton title="历史会话" onClick={() => setMenuOpen(v => !v)} disabled={sending}>
