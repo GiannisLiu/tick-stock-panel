@@ -31,6 +31,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # 必须关掉: 否则 checkout 会往 .git/config 写 http.https://github.com/.extraheader
+          # (值为 GITHUB_TOKEN), 它会覆盖下面 URL 里的 PAT, 推送依旧以 GITHUB_TOKEN 身份被拒 403。
+          persist-credentials: false
 
       - name: Mirror upstream/main -> upstream
         env:
