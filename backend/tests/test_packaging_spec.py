@@ -29,3 +29,10 @@ def test_spec_declares_builtin_plugin_fuyao():
     """fuyao 插件双声明不被回归 (同类动态发现问题, 见 spec 内注释)。"""
     assert "app.plugins.fuyao.provider" in SPEC_CODE
     assert "app/plugins/fuyao" in SPEC_CODE
+
+
+def test_spec_declares_builtin_plugin_amber():
+    """amber 插件双声明不被回归 (与 fuyao 同一处理方式)。"""
+    assert "app.plugins.amber.provider" in SPEC_CODE
+    assert "app.plugins.amber.client" in SPEC_CODE
+    assert "app/plugins/amber" in SPEC_CODE

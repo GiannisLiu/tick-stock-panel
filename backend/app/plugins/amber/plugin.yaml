@@ -1,0 +1,14 @@
+# amber — 自部署行情服务插件 (默认 http://127.0.0.1:8310, 纯 HTTP 无额外依赖)。
+# 服务地址可用环境变量 AMBER_BASE_URL 覆盖; API Key 在服务端 /keys 页面创建。
+# 未配置 AMBER_API_KEY 时插件灰显不可切换。
+
+name: amber
+display_name: "amber"
+runtime: none
+entry: app.plugins.amber.provider:AmberProvider
+check: app.plugins.amber.provider:availability
+datasets: [daily, full_minute, realtime]
+api_key_env: AMBER_API_KEY   # 声明后设置页提供 Key 输入框(先探后存, secrets.json 优先)
+description: "自部署 amber 行情服务(分钟仓库直读)。A 股日K(分钟按日聚合, 原始价, 历史深度随 amber 仓库积累变厚) + 全量分钟(批量分钟端点: 全天修复轮 + 稳态增量轮) + 实时行情(全市场列式快照, 含 ETF, 单请求一轮)。volume/amount 口径(手/元)与项目一致, 零换算; 指数行情与除权因子不在本插件范围, 指数由本地日K兜底, 因子继续走 TickFlow。"
+install_hint: "先启动 amber 服务并在其 /keys 页面创建 API Key, 填入下方输入框(先探后存); 服务地址默认 http://127.0.0.1:8310, 可用环境变量 AMBER_BASE_URL 覆盖, 或在 .env 配 AMBER_API_KEY"
+homepage: "http://localhost:8310"
